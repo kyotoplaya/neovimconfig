@@ -26,10 +26,13 @@ return {
       },
 
       mapping = cmp.mapping.preset.insert({
-        ["<CR>"] = cmp.mapping.confirm({ select = true }),
+        ["<CR>"] = cmp.mapping.confirm({
+          behavior = cmp.ConfirmBehavior.Replace, -- остаёмся в Insert Mode
+          select = false,                        -- не выбирать автоматически
+        }),
         ["<Tab>"] = cmp.mapping(function(fallback)
           if cmp.visible() then
-            cmp.confirm({ select = true })
+            cmp.select_next_item() -- только навигация, без confirm
           elseif has_words_before() then
             cmp.complete()
           else
@@ -37,7 +40,11 @@ return {
           end
         end, { "i", "s" }),
         ["<S-Tab>"] = cmp.mapping(function(fallback)
-          fallback()
+          if cmp.visible() then
+            cmp.select_prev_item()
+          else
+            fallback()
+          end
         end, { "i", "s" }),
       }),
 
