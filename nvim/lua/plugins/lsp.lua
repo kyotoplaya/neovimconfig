@@ -1,30 +1,43 @@
 return {
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = { "hrsh7th/cmp-nvim-lsp" },
-    config = function()
-      local capabilities = require("cmp_nvim_lsp").default_capabilities()
-      local lspconfig = require("lspconfig")
+  "neovim/nvim-lspconfig",
+  dependencies = { "hrsh7th/cmp-nvim-lsp" },
+  config = function()
+    local capabilities = vim.lsp.protocol.make_client_capabilities()
+    capabilities = require("cmp_nvim_lsp").default_capabilities(capabilities)
 
-      -- Новый API без deprecated setup()
-      vim.lsp.config.clangd = {
-        default_config = {
-          filetypes = { "c", "cpp" },
-          capabilities = capabilities,
-          root_dir = lspconfig.util.root_pattern("compile_commands.json", ".git"),
-        }
-      }
-
-      -- Автостарт LSP для C/C++
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "c", "cpp" },
-        callback = function()
-          if #vim.lsp.get_clients({ name = "clangd" }) == 0 then
-            vim.lsp.start({ name = "clangd" }) -- Mason гарантирует наличие бинарника
+    -- Настройка clangd через новый API
+    vim.lsp.config.clangd = {
+      default_config = {
+        cmd = { "clangd" }, -- Mason может подставить путь
+        filetypes = { "c", "cpp" },
+        -- root_dir без lspconfig.util
+        root_dir = function(fname)
+          local Path = vim.loop.fs_realpath(fname) or fname
+          local dir = vim.fn.fnamemodify(Path, ":p:h")
+          while dir ~= "/" do
+            if vim.fn.filereadable(dir .. "/compile_commands.json") == 1
+              or vim.fn.isdirectory(dir .. "/.git") == 1
+            then
+              return dir
+            end
+            dir = vim.fn.fnamemodify(dir, ":h")
           end
+          return vim.loop.cwd()
         end,
-      })
-    end,
-  },
+        capabilities = capabilities,
+      }
+    }
+
+    -- Включаем LSP
+    vim.lsp.enable("clangd")
+
+    -- После подключения LSP активируем CMP для буфера
+    vim.api.nvim_create_autocmd("LspAttach", {
+      callback = function(args)
+        local cmp = require("cmp")
+        cmp.setup.buffer({})
+      end,
+    })
+  end,
 }
 
