@@ -8,5 +8,5 @@ vim.keymap.set('n', '<leader>x', ':q<CR>', { desc = 'Quit without saving' })
 
 -- Neotree
 vim.keymap.set('n', '<leader>e', ':Neotree float<CR>', { desc = 'Open Neotree float' })
-vim.keymap.set('n', '<leader>n', ':Neotree left<CR>', { desc = 'Open Neotree roght' })
+vim.keymap.set('n', '<leader>n', ':Neotree left<CR>', { desc = 'Open Neotree right' })
 
