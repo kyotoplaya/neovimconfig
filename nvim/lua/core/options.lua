@@ -30,4 +30,4 @@ vim.opt.undofile = true           -- включаем persistent undo
 vim.opt.updatetime = 300          -- время обновления для CursorHold и LSP
 vim.opt.timeoutlen = 500          -- таймаут для mapped sequences
 vim.opt.clipboard = "unnamedplus" -- использовать системный буфер
-
+vim.opt.termguicolors = true
