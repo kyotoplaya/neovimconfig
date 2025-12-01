@@ -3,7 +3,7 @@ vim.g.mapleader = " "
 -- Базовые
 vim.keymap.set('n', '<leader>w', ':w<CR>', { desc = 'Save file' })
 vim.keymap.set('n', '<leader>q', ':q<CR>', { desc = 'Quit' })
-vim.keymap.set('n', '<leader>x', ':q<CR>', { desc = 'Quit without saving' })
+vim.keymap.set('n', '<leader>x', ':q!<CR>', { desc = 'Quit without saving' })
 
 
 -- Neotree
